@@ -1,0 +1,66 @@
+@import "./variaveis.scss";
+
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: $font;
+    transition: all ease-in-out .8s;
+}
+
+@mixin box (){
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+    background: $Very-Dark-Blue url(../images/bg-mobile-dark.jpg) center top no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    &.light{
+        background: $cinza-cla url(../images/bg-mobile-light.jpg) center top no-repeat;
+    }
+}
+
+main{
+    width: 80%;
+    height: 90%;
+    margin: 40px auto 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    header{
+        color: $cinza-cla;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    div.input{
+        @include box();
+        height: 45px;
+        background-color: $azul;
+
+        input{
+            @include box();
+            background-color: transparent;
+            border: none;
+            padding: 10px;
+            color: $cinzazul-esc;
+        }
+    }
+
+    section.list{
+        @include box();
+        height: 350px;
+        border: 1px solid wheat;
+    }
+
+}

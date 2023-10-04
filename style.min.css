@@ -1,0 +1,18 @@
+/* Error: Undefined variable.
+ *    ,
+ * 25 |         background: $cinza-cla url(../images/bg-mobile-light.jpg) center top no-repeat;
+ *    |                     ^^^^^^^^^^
+ *    '
+ *   sass\400px.scss 25:21  @import
+ *   sass\main.scss 2:9     root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Undefined variable.\a    \2577 \a 25 \2502          background: $cinza-cla url(../images/bg-mobile-light.jpg) center top no-repeat;\d\a    \2502                      ^^^^^^^^^^\a    \2575 \a   sass\\400px.scss 25:21  @import\a   sass\\main.scss 2:9     root stylesheet";
+}
