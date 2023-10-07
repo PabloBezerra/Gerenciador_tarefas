@@ -1,0 +1,288 @@
+// Importações
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&family=Space+Grotesk:wght@300;500&display=swap');
+
+// Variáveis
+
+//fonte
+$font: 'Josefin Sans', Arial, sans-serif;
+//Light Theme
+$Very-Light-Gray: hsl(0, 0%, 98%);
+$Very-Light-Grayish-Blue: hsl(236, 33%, 92%);
+$Light-Grayish-Blue: hsl(233, 11%, 84%);
+$Dark-Grayish-Blue: hsl(236, 9%, 61%);
+//Dark Theme
+$Very-Dark-Blue: hsl(235, 21%, 11%);
+$Very-Dark-Desaturated-Blue: hsl(235, 24%, 19%);
+$Light-Grayish-BlueH: hsl(236, 33%, 92%);
+$Very-Dark-Grayish-Blue: hsl(237, 14%, 26%);
+$Bright-Blue: hsl(220, 98%, 61%);
+
+//Configurações gerais
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: $font;
+    transition: all ease-in-out .5s;
+}
+
+//Mixins
+
+@mixin box(){
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+@mixin flex(){
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+//Configurando o fundo
+body{
+    width: 100vw;
+    height: 100vh;
+    background: $Very-Dark-Blue url(../images/bg-mobile-dark.jpg) center top no-repeat;
+    @include flex();
+    justify-content: space-between;
+    &.light{
+        background: $Very-Light-Grayish-Blue url(../images/bg-mobile-light.jpg) center top no-repeat;
+    }
+}
+
+//Configurando o Main
+main{
+    width: 80%;
+    height: 90%;
+    margin: 40px auto 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    header{ //titulo
+        color: $Very-Light-Gray;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .switch{
+            cursor: pointer;
+            svg#moon{display:none}
+            svg#sun{display:block}
+        }
+    }
+
+    div.input{ //input de entrada
+        @include box();
+        height: 45px;
+        background-color: $Very-Dark-Desaturated-Blue;
+        position: relative;
+
+        input{
+            @include box();
+            background-color: transparent;
+            border: none;
+            padding: 10px;
+            color: $Very-Light-Gray;
+            font-size: 1em;
+        }
+
+        span#add{
+            width: 30px;
+            height: 30px;
+            top: 7px;
+            right: 5px;
+            background-image: linear-gradient(90deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+            border-radius: 50%;
+            color: $Very-Light-Gray;
+            font-size: 30px;
+            text-align: center;
+            align-items: center;
+            position: absolute;
+            cursor: pointer;
+            transform: scale(0);
+        }
+    }
+
+    section.list{
+        @include box();
+        height: 70%;
+        overflow: hidden;
+        border-collapse:collapse;
+        background-color:$Very-Dark-Grayish-Blue;
+
+        div.campo{ //Campo de tarefas
+            width: 100%;
+            height: 90%;
+            overflow: auto;
+            &::-webkit-scrollbar{display: none}
+            &::-webkit-scrollbar-thumb{display: none}
+
+            div.tarefa{ //tarefa
+                width: 100%;
+                height: 50px;
+                background-color:$Very-Dark-Desaturated-Blue;
+                margin-top: 1px;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                cursor: move;
+    
+                .check{
+                    width: 20px;
+                    height: 20px;
+                    background: transparent;
+                    border: .2px solid $Light-Grayish-Blue;
+                    border-radius: 50%;
+                    cursor: pointer;
+    
+                    svg{display: none;}
+                }
+    
+                .descrição{
+                    color: $Very-Light-Grayish-Blue;
+                    text-transform: capitalize;
+                    font-size: .8em;
+                    margin-left: 5px;
+                    text-align: center;
+                }
+    
+                .remove{
+                    cursor: pointer;
+                }
+    
+                &.concluido{
+                    .check{
+                        background-image: linear-gradient(90deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+                        border: none;
+                        @include flex();
+    
+                        svg{display: block;}
+                    }
+    
+                    .descrição{
+                        text-decoration: line-through;
+                        color: $Dark-Grayish-Blue;
+                    }
+                }
+            }
+        }
+
+        div.config{ //configurações da barra de campo
+            width: 100%;
+            height: 10%;
+            @include flex();
+            padding: 10px;
+            flex-direction: row;
+            justify-content: space-between;
+            background-color:$Very-Dark-Desaturated-Blue;
+
+            .info{color:$Dark-Grayish-Blue;}
+
+            button{
+                background: transparent;
+                border: none;
+                color: $Very-Light-Gray;
+                &:hover{color:$Bright-Blue;}
+            }
+        }
+    }
+
+    section.filter{ // filtros de tarefa
+        width: 100%;
+        height: 35px;
+        border-radius: 5px;
+        @include flex();
+        flex-direction: row;
+        background-color: $Very-Dark-Grayish-Blue;
+
+        button{
+            padding: 0px 15px;
+            background-color: transparent;
+            border: none;
+            font-size: 1.1em;
+            color: $Very-Light-Gray;
+            cursor: pointer;
+            &:hover{
+                color:$Bright-Blue;
+            }
+        }
+    }
+
+    p{ //informação final
+        color:$Dark-Grayish-Blue;
+        text-align: center;
+    }
+
+    &.light{
+
+        .switch{
+            svg#sun{display:none}
+            svg#moon{display: block}
+        }
+
+        div.input{
+            background-color:$Very-Light-Gray;
+            input{color: $Very-Dark-Blue;}
+        }
+
+        section.list{
+            background-color:$Light-Grayish-Blue;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.171);
+            div.campo{
+                div.tarefa{
+                    background-color:$Very-Light-Gray;
+                    .check{ border-color:$Very-Dark-Grayish-Blue}
+                    .descrição{color:$Very-Dark-Grayish-Blue}
+                    &.concluido{background-color:$Light-Grayish-Blue;}
+                }   
+            }
+            div.config{
+                background-color: $Very-Light-Gray;
+                button{
+                    color:$Very-Dark-Desaturated-Blue;
+                    &:hover{color:$Bright-Blue}
+                }
+            }
+        }
+
+        section.filter{
+            background-color:$Very-Light-Gray;
+            button{
+                color:$Dark-Grayish-Blue;
+                &:hover{color:$Bright-Blue}
+            }
+        }
+    
+    }
+}
+
+// Configurações do rodapé da página
+footer{ 
+    margin: 0px auto;
+    font-size: .8em;
+    color: $Dark-Grayish-Blue;
+    text-decoration: none;
+
+}
+
+// Responsividade para telas maiores de 1200px
+@media screen and (min-width:1200px) {
+    body{
+        background: $Very-Dark-Blue url(../images/bg-desktop-dark.jpg) center top no-repeat;
+        &.light{
+            background: $Very-Light-Gray url(../images/bg-desktop-light.jpg) center top no-repeat;
+        }
+    }
+
+    main{
+        max-width: 500px;
+    }
+}
