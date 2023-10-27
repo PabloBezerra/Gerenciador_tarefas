@@ -1,6 +1,11 @@
+"use strict"
+
+// Seleção
 const body = document.querySelector('body')
 const main = document.querySelector('main')
 const campo = document.querySelector('.campo')
+const input = document.querySelector('#input')
+let contador = 0
 
 //Mudando o tema
 function theme(){
@@ -20,12 +25,12 @@ input.addEventListener('keydown', (event)=>{
     if(input.value.length >= 3 && event.key === 'Enter'){
         event.preventDefault()
         addTarefa()
+        atualizar()
     }
 })
 function addTarefa(){
     let tarefa = document.createElement('div')
     tarefa.className ='tarefa'
-    tarefa.id = 'tarefa'
     tarefa.draggable = true
     tarefa.innerHTML = `
     <div class="check">
@@ -40,19 +45,61 @@ function addTarefa(){
     input.value = ''
     input.focus()
     addButton()
+    console.log('Adicionado')
 }
 
-let tarefas = campo.querySelectorAll('.tarefa')
-tarefas.forEach((element)=>{
-    let check = element.querySelector('.check')
-    let remove = element.querySelector('.remove')
-    check.addEventListener('click',()=>{
-        console.log('check')
-        element.classList.toggle('concluido')
+// Marcando e removendo as tarefas
+function atualizar(){
+    const listaTarefa = campo.querySelectorAll('.tarefa')
+    listaTarefa.forEach(elemento =>{
+        elemento.querySelector('.check').onclick = ()=>{
+            if(elemento.classList.contains('concluido')){
+                elemento.classList.remove('concluido')
+                addCont(false)
+            }else{
+                elemento.classList.toggle('concluido')
+                addCont()
+            }
+        }
+        elemento.querySelector('.remove').onclick = ()=>{elemento.remove()}
     })
-    remove.addEventListener('click',()=>{
-        campo.removeChild(element)
-        console.log('remove')
-    })
+}
 
-})
+function addCont(add=true){
+    if(add){
+        contador++
+    }else{
+        contador--
+    }
+    document.querySelector('.info').innerHTML = `${contador} tarefas concluídas`
+}
+
+// Aplicando filtros e limpando
+function clean(){
+    const limpeza = campo.querySelectorAll('.concluido')
+    limpeza.forEach(elemento => { elemento.remove() })
+}
+
+function filtro(num){
+    const todasTarefas = campo.querySelectorAll('.tarefa')
+    todasTarefas.forEach(elemento =>{
+        switch(num){
+            case 1 :
+                elemento.style.visibility = 'visible'  
+                break
+            case 2 :
+                if(elemento.classList.contains('concluido')){
+                    elemento.style.visibility = 'hidden'
+                }
+                elemento.style.visibility = 'visible'
+                break
+            case 3 :
+                if(elemento.classList.contains('concluido')){
+                    elemento.style.visibility = 'visible'
+                }
+                elemento.style.visibility = 'hidden'
+            break
+        }
+    })
+}
+
