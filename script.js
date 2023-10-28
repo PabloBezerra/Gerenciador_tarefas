@@ -82,24 +82,43 @@ function clean(){
 
 function filtro(num){
     const todasTarefas = campo.querySelectorAll('.tarefa')
-    todasTarefas.forEach(elemento =>{
-        switch(num){
-            case 1 :
-                elemento.style.visibility = 'visible'  
-                break
-            case 2 :
-                if(elemento.classList.contains('concluido')){
-                    elemento.style.visibility = 'hidden'
-                }
-                elemento.style.visibility = 'visible'
-                break
-            case 3 :
-                if(elemento.classList.contains('concluido')){
-                    elemento.style.visibility = 'visible'
-                }
-                elemento.style.visibility = 'hidden'
+    switch(num){
+        case 1:
+            todasTarefas.forEach(elemento =>{
+                elemento.style.display = 'flex'
+                console.log(elemento.classList)
+            })
             break
-        }
-    })
+        case 2:
+            todasTarefas.forEach(elemento =>{
+                if(elemento.classList.contains('concluido')){
+                    elemento.style.display = 'none'
+                    console.log(elemento.classList)
+                }else{
+                    elemento.style.display = 'flex'
+                }
+            })
+            break
+        case 3:
+            todasTarefas.forEach(elemento =>{
+                if(elemento.classList.contains('concluido')){
+                    elemento.style.display = 'flex'
+                    console.log(elemento.classList)
+                }else{
+                    elemento.style.display = 'none'
+                }
+            })
+            break
+    }
 }
+
+// Arrastando e soltando
+
+campo.addEventListener('dragstart', (elemento)=>{
+    elemento.target.classList.add('dragging')
+})
+
+campo.addEventListener('dragend', (elemento) =>{
+    elemento.target.classList.remove('dragging')
+})
 
