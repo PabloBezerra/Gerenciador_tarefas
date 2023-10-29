@@ -114,11 +114,14 @@ function filtro(num){
 
 // Arrastando e soltando
 
-campo.addEventListener('dragstart', (elemento)=>{
-    elemento.target.classList.add('dragging')
+campo.querySelectorAll('.tarefa').forEach(elemento =>{
+    elemento.addEventListener('dragstart', ()=>{
+        elemento.classList.add('dragging')
+    })
+    elemento.addEventListener('dragend', ()=>{
+        elemento.classList.remove('dragging')
+    })
 })
 
-campo.addEventListener('dragend', (elemento) =>{
-    elemento.target.classList.remove('dragging')
-})
+
 
