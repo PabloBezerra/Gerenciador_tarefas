@@ -208,10 +208,10 @@
 
     function getTask(){
         let arm = localStorage.getItem('tasks')
-        arm = JSON.parse(arm)
-        if(!arm.length){
+        if(arm === null || !arm.length ){
             return
         }
+        arm = JSON.parse(arm)
         tasks = tasks.concat(arm)
         updateTasks(tasks)
     }
