@@ -1,127 +1,226 @@
-"use strict"
+(function(){
+    "use strict"
 
-// Seleção
-const body = document.querySelector('body')
-const main = document.querySelector('main')
-const campo = document.querySelector('.campo')
-const input = document.querySelector('#input')
-let contador = 0
+    // Seleção
+    const body = document.querySelector('body')
+    const main = document.querySelector('main')
+    const campo = document.querySelector('.campo')
+    const allTasks = campo.getElementsByClassName('task')
+    const input = document.querySelector('#input')
+    const tema = document.querySelector('.switch')
+    const config = document.querySelector('.config')
+    const filter = document.querySelector('.filter')
+    let tasks = []
 
-//Mudando o tema
-function theme(){
-    body.classList.toggle('light') 
-    main.classList.toggle('light')
-}
 
-//Adição e criação da tarefa
-function addButton(){
-    if(input.value.length >= 3){
-        add.style.transform = 'scale(1)'
+    //Mudando o tema
+    tema.addEventListener('click',()=>{
+        if(localStorage.getItem('theme') === null){
+            localStorage.setItem('theme', 'dark')
+        }
+        if(localStorage.getItem('theme') === 'dark'){
+            body.classList.add('light')
+            main.classList.add('light')
+            localStorage.setItem('theme', 'light')
+        }else if(localStorage.getItem('theme') === 'light'){
+            body.classList.remove('light')
+            main.classList.remove('light')
+            localStorage.setItem('theme', 'dark')
+        }
+    })
+
+    if(localStorage.getItem('theme') === 'light'){
+        body.classList.add('light')
+        main.classList.add('light')
     }else{
-        add.style.transform = 'scale(0)'
+        body.classList.remove('light')
+        main.classList.remove('light')
     }
-}
-input.addEventListener('keydown', (event)=>{
-    if(input.value.length >= 3 && event.key === 'Enter'){
-        event.preventDefault()
-        addTarefa()
-        atualizar()
-    }
-})
-function addTarefa(){
-    let tarefa = document.createElement('div')
-    tarefa.className ='tarefa'
-    tarefa.draggable = true
-    tarefa.innerHTML = `
-    <div class="check">
-        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="9"><path fill="none" stroke="#FFFFFF" stroke-width="2" d="M1 4.304L3.696 7l6-6"/></svg>
-    </div>
-    <p class="descrição">${input.value}</p>
-    <div class="remove">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path fill="#494C6B" fill-rule="evenodd" d="M16.97 0l.708.707L9.546 8.84l8.132 8.132-.707.707-8.132-8.132-8.132 8.132L0 16.97l8.132-8.132L0 .707.707 0 8.84 8.132 16.971 0z"/></svg>
-    </div>
-    `
-    campo.appendChild(tarefa)
-    input.value = ''
-    input.focus()
-    addButton()
-    console.log('Adicionado')
-}
 
-// Marcando e removendo as tarefas
-function atualizar(){
-    const listaTarefa = campo.querySelectorAll('.tarefa')
-    listaTarefa.forEach(elemento =>{
-        elemento.querySelector('.check').onclick = ()=>{
-            if(elemento.classList.contains('concluido')){
-                elemento.classList.remove('concluido')
-                addCont(false)
-            }else{
-                elemento.classList.toggle('concluido')
-                addCont()
+
+    //Criação e adição da tarefa
+    input.addEventListener('input',()=>{
+        if(input.value.length > 3){
+            input.nextElementSibling.style.transform = 'scale(1)'
+            return
+        }
+        input.nextElementSibling.style.transform = 'scale(0)'
+    })
+
+    input.parentElement.addEventListener('submit', (event)=>{
+        event.preventDefault()
+        if(!input.value || input.value.length <= 3){
+            return
+        }
+        const item = {
+            nome: input.value,
+            concluido: false,
+        }
+        tasks.push(item)
+        updateTasks(tasks)
+        input.value = ''
+        input.focus()
+        input.nextElementSibling.style.transform = 'scale(0)'
+    })
+
+    function updateTasks(obj, msg='tarefas ao todo'){
+        campo.innerHTML = ''
+        obj.forEach(element => {
+            campo.appendChild(printTasks(element.nome, element.concluido))
+        })
+        config.firstElementChild.innerHTML = `${obj.length} ${msg}`
+        saveTask(tasks)
+    }
+
+    function printTasks(nome, concluido){
+        const divCheck = document.createElement('div')
+        divCheck.classList.add('check')
+        divCheck.setAttribute('tipo', 'checagem')
+        divCheck.innerHTML = '<svg tipo="checagem" xmlns="http://www.w3.org/2000/svg" width="11" height="9"><path tipo="checagem" fill="none" stroke="#FFFFFF" stroke-width="2" d="M1 4.304L3.696 7l6-6"/></svg>'
+
+        const p = document.createElement('p')
+        p.classList.add('descrição')
+        p.setAttribute('tipo', 'titulo')
+        p.innerText = nome.charAt(0).toUpperCase() + nome.slice(1)
+
+        const divEdit = document.createElement('div')
+        divEdit.classList.add('edit')
+        divEdit.setAttribute('tipo', 'edicao')
+        divEdit.innerHTML = '<svg tipo="edicao" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path tipo="edicao" fill="#9394a5" d="M120-120v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm584-528 56-56-56-56-56 56 56 56Z"/></svg>'
+
+        const form = document.createElement('form')
+        form.classList.add('formEdit')
+        form.innerHTML=`<input type="text" name="edit" id="iEdit" minlength="3" maxlength="40" value="${nome}"><input type="submit" value="Ok" tipo="formEdicao"><input tipo="formEdicao" type="reset" value="Cancelar">`
+
+        const divDel = document.createElement('div')
+        divDel.classList.add('remove')
+        divDel.setAttribute('tipo', 'exclusao')
+        divDel.innerHTML = '<svg tipo="exclusao" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path tipo="exclusao" fill="#9394a5" fill-rule="evenodd" d="M16.97 0l.708.707L9.546 8.84l8.132 8.132-.707.707-8.132-8.132-8.132 8.132L0 16.97l8.132-8.132L0 .707.707 0 8.84 8.132 16.971 0z"/></svg>'
+
+        const divTask = document.createElement('div')
+        divTask.classList.add('task')
+        if(concluido){divTask.classList.add('concluido')}
+        divTask.appendChild(divCheck)
+        divTask.appendChild(p)
+        divTask.appendChild(divEdit)
+        divTask.appendChild(form)
+        divTask.appendChild(divDel)
+
+        return divTask
+    }
+
+    // Modificando a tarefa
+
+    campo.addEventListener('click', (event)=>{
+        event.preventDefault()
+        domEvent(event.target)
+    })
+
+    function domEvent(event){
+        const tipagem = event.getAttribute('tipo')
+        if(event.className === 'campo' || !tipagem ){
+            return
+        }
+        let element = event
+        while (element.classList[0] !== 'task'){
+            element = element.parentElement
+        }
+        const item = [...allTasks].indexOf(element)
+        const opcoes = {
+            checagem:()=>{
+                if(!tasks[item].concluido){
+                    tasks[item].concluido = true
+                }else{
+                    tasks[item].concluido = false
+                }
+                updateTasks(tasks)
+            },
+            edicao:()=>{
+                const form = element.querySelector('.formEdit');
+                [...campo.querySelectorAll('.formEdit')].forEach(element=>{
+                    element.removeAttribute('style')
+                })
+                form.style.display = "flex"
+            },
+            exclusao:()=>{
+                tasks.splice(item, 1)
+                updateTasks(tasks)
+            },
+            formEdicao:()=>{
+                const input = element.querySelector('#iEdit')
+                if(event.getAttribute('type') === 'submit'){
+                    if(input.value.length <= 3 ){
+                        return
+                    }
+                    tasks[item].nome = input.value
+                    updateTasks(tasks)
+                }else if(event.getAttribute('type') === 'reset'){
+                    event.parentElement.style.display = 'none'
+                }
+            },
+        }
+        if(opcoes[tipagem]){
+            opcoes[tipagem]()
+        }
+    }
+
+    // Arrastando e soltando
+
+
+    // Filtros e limpeza
+    filter.addEventListener('click',(event)=>{
+        event.preventDefault()
+        filtros(event.target.getAttribute('tipo'))
+    })
+
+    function filtros(tipo){
+        const opcoes = {
+            todos:()=>{
+                updateTasks(tasks)
+            }, aFazer: ()=>{
+                const pendente = tasks.filter(element=>{
+                    return element.concluido === false
+                })
+                updateTasks(pendente, 'tarefas pendentes')
+            }, concluido:()=>{
+                const realizado = tasks.filter(element=>{
+                    return element.concluido === true
+                })
+                updateTasks(realizado, 'tarefas concluídas')
             }
         }
-        elemento.querySelector('.remove').onclick = ()=>{elemento.remove()}
-    })
-}
-
-function addCont(add=true){
-    if(add){
-        contador++
-    }else{
-        contador--
+        if(opcoes[tipo]){
+            opcoes[tipo]()
+        }
     }
-    document.querySelector('.info').innerHTML = `${contador} tarefas concluídas`
-}
 
-// Aplicando filtros e limpando
-function clean(){
-    const limpeza = campo.querySelectorAll('.concluido')
-    limpeza.forEach(elemento => { elemento.remove() })
-}
+    config.lastElementChild.addEventListener('click',()=>{
+        const pendentes = tasks.filter(element=>{
+            if(element.concluido === false){
+                return element
+            }
+        })
+        tasks = pendentes
+        updateTasks(tasks)
+    })
 
-function filtro(num){
-    const todasTarefas = campo.querySelectorAll('.tarefa')
-    switch(num){
-        case 1:
-            todasTarefas.forEach(elemento =>{
-                elemento.style.display = 'flex'
-                console.log(elemento.classList)
-            })
-            break
-        case 2:
-            todasTarefas.forEach(elemento =>{
-                if(elemento.classList.contains('concluido')){
-                    elemento.style.display = 'none'
-                    console.log(elemento.classList)
-                }else{
-                    elemento.style.display = 'flex'
-                }
-            })
-            break
-        case 3:
-            todasTarefas.forEach(elemento =>{
-                if(elemento.classList.contains('concluido')){
-                    elemento.style.display = 'flex'
-                    console.log(elemento.classList)
-                }else{
-                    elemento.style.display = 'none'
-                }
-            })
-            break
+    // Armazenamento
+
+    function getTask(){
+        let arm = localStorage.getItem('tasks')
+        arm = JSON.parse(arm)
+        if(!arm.length){
+            return
+        }
+        tasks = tasks.concat(arm)
+        updateTasks(tasks)
     }
-}
+    getTask()
 
-// Arrastando e soltando
+    function saveTask(obj){
+        localStorage.setItem('tasks', JSON.stringify(obj))
+    }
 
-campo.querySelectorAll('.tarefa').forEach(elemento =>{
-    elemento.addEventListener('dragstart', ()=>{
-        elemento.classList.add('dragging')
-    })
-    elemento.addEventListener('dragend', ()=>{
-        elemento.classList.remove('dragging')
-    })
-})
-
+}())
 
 
