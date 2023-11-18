@@ -15,9 +15,6 @@
 
     //Mudando o tema
     tema.addEventListener('click',()=>{
-        if(localStorage.getItem('theme') === null){
-            localStorage.setItem('theme', 'dark')
-        }
         if(localStorage.getItem('theme') === 'dark'){
             body.classList.add('light')
             main.classList.add('light')
@@ -29,6 +26,9 @@
         }
     })
 
+    if(!localStorage.getItem('theme')){
+        localStorage.setItem('theme', 'dark')
+    }
     if(localStorage.getItem('theme') === 'light'){
         body.classList.add('light')
         main.classList.add('light')
@@ -39,6 +39,12 @@
 
 
     //Criação e adição da tarefa
+
+    function ContructTask(nome, concluido=false){
+        this.nome = nome.charAt(0).toUpperCase() + nome.slice(1)
+        this.concluido = concluido
+    }
+
     input.addEventListener('input',()=>{
         if(input.value.length > 3){
             input.nextElementSibling.style.transform = 'scale(1)'
@@ -52,15 +58,12 @@
         if(!input.value || input.value.length <= 3){
             return
         }
-        const item = {
-            nome: input.value,
-            concluido: false,
-        }
-        tasks.push(item)
+        tasks.push(new ContructTask(input.value))
         updateTasks(tasks)
         input.value = ''
         input.focus()
         input.nextElementSibling.style.transform = 'scale(0)'
+        console.log(tasks)
     })
 
     function updateTasks(obj, msg='tarefas ao todo'){
@@ -81,7 +84,7 @@
         const p = document.createElement('p')
         p.classList.add('descrição')
         p.setAttribute('tipo', 'titulo')
-        p.innerText = nome.charAt(0).toUpperCase() + nome.slice(1)
+        p.innerText = nome 
 
         const divEdit = document.createElement('div')
         divEdit.classList.add('edit')
