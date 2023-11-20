@@ -42,7 +42,7 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [Add solution URL here](https://github.com/PabloBezerra/Gerenciador_tarefas)
+- Solution URL: [Soluction](https://www.frontendmentor.io/solutions/todo-app-with-sass-and-flexbox-responsive-eFYcLYBGkU)
 - Live Site URL: [Gerenciador de tarefas](https://pablobezerra.github.io/Gerenciador_tarefas/)
 
 ## My process
