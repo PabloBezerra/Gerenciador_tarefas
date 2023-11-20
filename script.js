@@ -9,7 +9,7 @@
     const input = document.querySelector('#input')
     const tema = document.querySelector('.switch')
     const config = document.querySelector('.config')
-    const filter = document.querySelector('.filter')
+    const filt = document.querySelector('.filter')
     let tasks = []
 
 
@@ -46,7 +46,7 @@
     }
 
     input.addEventListener('input',()=>{
-        if(input.value.length > 3){
+        if(input.value.length >= 3){
             input.nextElementSibling.style.transform = 'scale(1)'
             return
         }
@@ -55,7 +55,7 @@
 
     input.parentElement.addEventListener('submit', (event)=>{
         event.preventDefault()
-        if(!input.value || input.value.length <= 3){
+        if(!input.value || input.value.length < 3){
             return
         }
         tasks.push(new ContructTask(input.value))
@@ -63,7 +63,6 @@
         input.value = ''
         input.focus()
         input.nextElementSibling.style.transform = 'scale(0)'
-        console.log(tasks)
     })
 
     function updateTasks(obj, msg='tarefas ao todo'){
@@ -101,14 +100,18 @@
         divDel.innerHTML = '<svg tipo="exclusao" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path tipo="exclusao" fill="#9394a5" fill-rule="evenodd" d="M16.97 0l.708.707L9.546 8.84l8.132 8.132-.707.707-8.132-8.132-8.132 8.132L0 16.97l8.132-8.132L0 .707.707 0 8.84 8.132 16.971 0z"/></svg>'
 
         const divTask = document.createElement('div')
+        divTask.id = `i-${Date.now()}`
         divTask.classList.add('task')
+        divTask.draggable = true 
         if(concluido){divTask.classList.add('concluido')}
         divTask.appendChild(divCheck)
         divTask.appendChild(p)
         divTask.appendChild(divEdit)
         divTask.appendChild(form)
         divTask.appendChild(divDel)
-
+        divTask.addEventListener('dragstart', dragStart)
+        divTask.addEventListener('dragover', dragOver)
+        divTask.addEventListener('drop', drop)
         return divTask
     }
 
@@ -144,22 +147,23 @@
                     element.removeAttribute('style')
                 })
                 form.style.display = "flex"
-            },
-            exclusao:()=>{
-                tasks.splice(item, 1)
-                updateTasks(tasks)
+                element.querySelector('#iEdit').focus()
             },
             formEdicao:()=>{
-                const input = element.querySelector('#iEdit')
+                const input = element.querySelector('#iEdit').value
                 if(event.getAttribute('type') === 'submit'){
-                    if(input.value.length <= 3 ){
+                    if(input.length < 3 ){
                         return
                     }
-                    tasks[item].nome = input.value
+                    tasks[item].nome = input.charAt(0).toUpperCase() + input.slice(1)
                     updateTasks(tasks)
                 }else if(event.getAttribute('type') === 'reset'){
                     event.parentElement.style.display = 'none'
                 }
+            },
+            exclusao:()=>{
+                tasks.splice(item, 1)
+                updateTasks(tasks)
             },
         }
         if(opcoes[tipagem]){
@@ -169,9 +173,50 @@
 
     // Arrastando e soltando
 
+    function dragStart(event){
+       event.dataTransfer.setData('text/plain', event.target.id)
+    }
+    function dragOver(event){
+        event.preventDefault()
+    }
+    function drop(event){
+        const listEl = document.querySelector('.campo')
+        let targetEl = event.target
+        while (!targetEl.classList.contains('task')){
+            targetEl = targetEl.parentElement
+        }
+
+        const id = event.dataTransfer.getData('text/plain')
+        const draggingEl = document.getElementById(id)
+
+        const listItens = Array.from(listEl.children)
+        const draggedIndex = listItens.indexOf(draggingEl)
+        const droppedIndex = listItens.indexOf(targetEl)
+        
+        if(targetEl.parentElement.className === 'campo'){
+            if (draggedIndex < droppedIndex) {
+                listEl.insertBefore(draggingEl, targetEl);
+                refresh();
+            }
+            if (draggedIndex > droppedIndex) {
+                listEl.insertBefore(draggingEl, targetEl.nextElementSibling);
+                refresh();
+            }
+        }
+    }
+
+    function refresh(){
+        tasks = [];
+        [...campo.children].forEach(element=>{
+            const nome = element.textContent
+            const concluido = element.classList.contains('concluido')? true : false
+            tasks.push(new ContructTask(nome, concluido))
+        })
+        updateTasks(tasks)
+    }
 
     // Filtros e limpeza
-    filter.addEventListener('click',(event)=>{
+    filt.addEventListener('click',(event)=>{
         event.preventDefault()
         filtros(event.target.getAttribute('tipo'))
     })
@@ -225,5 +270,3 @@
     }
 
 }())
-
-

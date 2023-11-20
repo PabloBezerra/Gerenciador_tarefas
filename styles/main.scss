@@ -47,10 +47,12 @@ body{
     width: 100vw;
     height: 100vh;
     background: $Very-Dark-Blue url(../images/bg-mobile-dark.jpg) center top no-repeat;
+    background-size: contain;
     @include flex();
     justify-content: space-between;
     &.light{
         background: $Very-Light-Grayish-Blue url(../images/bg-mobile-light.jpg) center top no-repeat;
+        background-size: contain;
     }
 }
 
