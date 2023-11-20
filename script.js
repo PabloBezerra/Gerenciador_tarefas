@@ -109,9 +109,11 @@
         divTask.appendChild(divEdit)
         divTask.appendChild(form)
         divTask.appendChild(divDel)
-        divTask.addEventListener('dragstart', dragStart)
-        divTask.addEventListener('dragover', dragOver)
-        divTask.addEventListener('drop', drop)
+        divTask.addEventListener('dragstart',()=> divTask.classList.add('movel'))
+        divTask.addEventListener('dragend', ()=> {
+            divTask.classList.remove('movel')
+            refresh()
+        })
         return divTask
     }
 
@@ -173,37 +175,18 @@
 
     // Arrastando e soltando
 
-    function dragStart(event){
-       event.dataTransfer.setData('text/plain', event.target.id)
-    }
-    function dragOver(event){
+    function initSortableList(event){
         event.preventDefault()
+        const movel = campo.querySelector('.movel')
+        const irmaos = [...campo.querySelectorAll('.task:not(.movel)')]
+        let proxIrmao = irmaos.find(element =>{
+            return event.clientY <= element.offsetTop + element.offsetHeight /2
+        })
+        campo.insertBefore(movel, proxIrmao)
     }
-    function drop(event){
-        const listEl = document.querySelector('.campo')
-        let targetEl = event.target
-        while (!targetEl.classList.contains('task')){
-            targetEl = targetEl.parentElement
-        }
+    campo.addEventListener('dragover', initSortableList)
+    campo.addEventListener('dragenter', event => event.preventDefault())
 
-        const id = event.dataTransfer.getData('text/plain')
-        const draggingEl = document.getElementById(id)
-
-        const listItens = Array.from(listEl.children)
-        const draggedIndex = listItens.indexOf(draggingEl)
-        const droppedIndex = listItens.indexOf(targetEl)
-        
-        if(targetEl.parentElement.className === 'campo'){
-            if (draggedIndex < droppedIndex) {
-                listEl.insertBefore(draggingEl, targetEl);
-                refresh();
-            }
-            if (draggedIndex > droppedIndex) {
-                listEl.insertBefore(draggingEl, targetEl.nextElementSibling);
-                refresh();
-            }
-        }
-    }
 
     function refresh(){
         tasks = [];
