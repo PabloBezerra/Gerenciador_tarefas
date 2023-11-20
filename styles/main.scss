@@ -1,10 +1,10 @@
-// Importações
+// IMPORTS
 
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&family=Space+Grotesk:wght@300;500&display=swap');
 
-// Variáveis
+// VARIABLES
 
-//fonte
+//font
 $font: 'Josefin Sans', Arial, sans-serif;
 //Light Theme
 $Very-Light-Gray: hsl(0, 0%, 98%);
@@ -18,7 +18,8 @@ $Light-Grayish-BlueH: hsl(236, 33%, 92%);
 $Very-Dark-Grayish-Blue: hsl(237, 14%, 26%);
 $Bright-Blue: hsl(220, 98%, 61%);
 
-//Configurações gerais
+//RESET SETTINGS
+
 *{
     margin: 0px;
     padding: 0px;
@@ -27,7 +28,7 @@ $Bright-Blue: hsl(220, 98%, 61%);
     transition: all ease-in-out .5s;
 }
 
-//Mixins
+//MIXINS
 
 @mixin box(){
     width: 100%;
@@ -42,7 +43,8 @@ $Bright-Blue: hsl(220, 98%, 61%);
     align-items: center;
 }
 
-//Configurando o fundo
+//BACKGROUND SETTINGS
+
 body{
     width: 100vw;
     height: 100vh;
@@ -50,13 +52,16 @@ body{
     background-size: contain;
     @include flex();
     justify-content: space-between;
+
+    //Ligth settings
     &.light{
         background: $Very-Light-Grayish-Blue url(../images/bg-mobile-light.jpg) center top no-repeat;
         background-size: contain;
     }
 }
 
-//Configurando o Main
+//MAIN SETTINS
+
 main{
     width: 80%;
     max-width: 500px;
@@ -66,7 +71,8 @@ main{
     flex-direction: column;
     justify-content: space-around;
 
-    header{ //titulo
+    //Title
+    header{ 
         color: $Very-Light-Gray;
         text-transform: uppercase;
         letter-spacing: 5px;
@@ -74,6 +80,7 @@ main{
         flex-direction: row;
         justify-content: space-between;
 
+        //Icon sun and moon
         .switch{
             cursor: pointer;
             svg#moon{display:none}
@@ -81,12 +88,14 @@ main{
         }
     }
 
-    form.input{ //input de entrada
+    //Main input form
+    form.input{ 
         @include box();
         height: 45px;
         background-color: $Very-Dark-Desaturated-Blue;
         position: relative;
 
+        //text input
         input{
             @include box();
             background-color: transparent;
@@ -96,6 +105,7 @@ main{
             font-size: 1em;
         }
 
+        //button input
         button{
             width: 30px;
             height: 30px;
@@ -114,6 +124,7 @@ main{
         }
     }
 
+    //Central area
     section.list{
         @include box();
         height: 70%;
@@ -121,14 +132,16 @@ main{
         border-collapse:collapse;
         background-color:$Very-Dark-Grayish-Blue;
 
-        div.campo{ //Campo de tarefas
+        //Task area
+        div.campo{
             width: 100%;
             height: 90%;
             overflow: auto;
             &::-webkit-scrollbar{display: none}
             &::-webkit-scrollbar-thumb{display: none}
 
-            div.task{ //tarefa
+            //The task
+            div.task{
                 width: 100%;
                 height: 50px;
                 background-color:$Very-Dark-Desaturated-Blue;
@@ -139,7 +152,8 @@ main{
                 justify-content: space-between;
                 position: relative;
                 cursor: move;
-    
+                
+                //button check task
                 .check{
                     width: 20px;
                     height: 20px;
@@ -150,7 +164,8 @@ main{
     
                     svg{display: none;}
                 }
-    
+                
+                //task name area
                 .descrição{
                     width: 70%;
                     color: $Very-Light-Grayish-Blue;
@@ -159,10 +174,12 @@ main{
                     text-align: left;
                 }
 
-                .edit{
+                //button edit task
+                .edit{ 
                     cursor: pointer;
                 }
 
+                //form edit
                 .formEdit{
                     display: none;
                     position: absolute;
@@ -178,6 +195,7 @@ main{
                     top: 35px;
                     z-index: 99999;
                 }
+                //input text of form edit
                 .formEdit input[type="text"]{
                     width: auto;
                     height: 30px;
@@ -188,27 +206,31 @@ main{
                     padding-left: 3px;
                     flex-basis: 100%;
                 }
+                //button ok of form edit
                 .formEdit input[type="submit"]{
                     width: 49%;
-                    background-color: darkgreen;
+                    background-color: hsl(192, 48%, 48%);
                     color: $Very-Light-Gray;
                     border-radius: 3px;
                     border: none;
                     cursor: pointer;
                 }
+                //button cancel of form edit
                 .formEdit input[type="reset"]{
                     width: 49%;
-                    background-color: darkred;
+                    background-color: hsl(280, 87%, 65%);
                     color: $Very-Light-Gray;
                     border-radius: 3px;
                     border: none;
                     cursor: pointer;
                 }
-    
+                
+                //button remove task
                 .remove{
                     cursor: pointer;
                 }
-    
+                
+                //task state completed
                 &.concluido{
                     .check{
                         background-image: linear-gradient(90deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
@@ -221,10 +243,16 @@ main{
                         color: $Dark-Grayish-Blue;
                     }
                 }
+
+                // task state movel
+                &.movel{
+                    opacity: 25%;
+                }
             }
         }
 
-        div.config{ //configurações da barra de campo
+        //bottom bar
+        div.config{ 
             width: 100%;
             height: 10%;
             @include flex();
@@ -234,6 +262,8 @@ main{
             background-color:$Very-Dark-Desaturated-Blue;
             border-top: 2px rgba(0, 0, 0, 0.082) solid;
             .info{color:$Dark-Grayish-Blue;}
+
+            //button clear all completed
             button{
                 background: transparent;
                 border: none;
@@ -243,7 +273,8 @@ main{
         }
     }
 
-    section.filter{ // filtros de tarefa
+    //filter of tasks
+    section.filter{ 
         width: 100%;
         height: 35px;
         border-radius: 5px;
@@ -251,6 +282,7 @@ main{
         flex-direction: row;
         background-color: $Very-Dark-Grayish-Blue;
 
+        // all filter buttons
         button{
             padding: 0px 15px;
             background-color: transparent;
@@ -264,12 +296,14 @@ main{
         }
     }
 
-    p{ //informação final
+    //status
+    p.status{ 
         color:$Dark-Grayish-Blue;
         text-align: center;
     }
 
-    &.light{ // Tema claro
+    //Generale settins of theme light
+    &.light{
 
         .switch{
             svg#sun{display:none}
@@ -294,7 +328,6 @@ main{
                         background-color:$Light-Grayish-BlueH;
                         color: $Very-Dark-Blue;
                     }
-                    &.concluido{background-color:$Light-Grayish-Blue;}
                 }   
             }
             div.config{
@@ -305,9 +338,10 @@ main{
                 }
             }
         }
-
+        
         section.filter{
             background-color:$Very-Light-Gray;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.171);
             button{
                 color:$Dark-Grayish-Blue;
                 &:hover{color:$Bright-Blue}
@@ -317,7 +351,7 @@ main{
     }
 }
 
-// Configurações do rodapé da página
+// FOOTER SETTINGS
 footer{ 
     margin: 0px auto;
     font-size: .8em;
@@ -326,7 +360,7 @@ footer{
 
 }
 
-// Responsividade para telas maiores de 1200px
+// Responsiveness for screens larger than 1200px
 @media screen and (min-width:1200px) {
     body{
         background: $Very-Dark-Blue url(../images/bg-desktop-dark.jpg) center top no-repeat;

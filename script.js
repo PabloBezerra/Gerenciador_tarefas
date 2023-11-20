@@ -1,7 +1,8 @@
 (function(){
     "use strict"
 
-    // Seleção
+    // MAINS VARIABLES
+
     const body = document.querySelector('body')
     const main = document.querySelector('main')
     const campo = document.querySelector('.campo')
@@ -10,10 +11,12 @@
     const tema = document.querySelector('.switch')
     const config = document.querySelector('.config')
     const filt = document.querySelector('.filter')
+    let allTaskAvailable = true 
     let tasks = []
+    //--------------------------------------------------------------------------------------------//
 
+    //CHANGING THE THEME
 
-    //Mudando o tema
     tema.addEventListener('click',()=>{
         if(localStorage.getItem('theme') === 'dark'){
             body.classList.add('light')
@@ -25,7 +28,6 @@
             localStorage.setItem('theme', 'dark')
         }
     })
-
     if(!localStorage.getItem('theme')){
         localStorage.setItem('theme', 'dark')
     }
@@ -36,16 +38,18 @@
         body.classList.remove('light')
         main.classList.remove('light')
     }
+    //--------------------------------------------------------------------------------------------//
 
+    //CREATING AND ADDING THE TASKS
 
-    //Criação e adição da tarefa
-
-    function ContructTask(nome, concluido=false){
+    //Constructor of taks object
+    function ContructTask(nome, concluido=false){ 
         this.nome = nome.charAt(0).toUpperCase() + nome.slice(1)
         this.concluido = concluido
     }
 
-    input.addEventListener('input',()=>{
+    //Add button animation
+    input.addEventListener('input',()=>{ 
         if(input.value.length >= 3){
             input.nextElementSibling.style.transform = 'scale(1)'
             return
@@ -53,7 +57,8 @@
         input.nextElementSibling.style.transform = 'scale(0)'
     })
 
-    input.parentElement.addEventListener('submit', (event)=>{
+    //Event that creates the tasks and adds it to the array
+    input.parentElement.addEventListener('submit', (event)=>{ 
         event.preventDefault()
         if(!input.value || input.value.length < 3){
             return
@@ -65,7 +70,8 @@
         input.nextElementSibling.style.transform = 'scale(0)'
     })
 
-    function updateTasks(obj, msg='tarefas ao todo'){
+    //Update the task screen with each modification to the task array
+    function updateTasks(obj, msg='tarefas ao todo'){ 
         campo.innerHTML = ''
         obj.forEach(element => {
             campo.appendChild(printTasks(element.nome, element.concluido))
@@ -74,6 +80,7 @@
         saveTask(tasks)
     }
 
+    //Create and adds the necessary task elements and features to the screen
     function printTasks(nome, concluido){
         const divCheck = document.createElement('div')
         divCheck.classList.add('check')
@@ -109,21 +116,34 @@
         divTask.appendChild(divEdit)
         divTask.appendChild(form)
         divTask.appendChild(divDel)
-        divTask.addEventListener('dragstart',()=> divTask.classList.add('movel'))
-        divTask.addEventListener('dragend', ()=> {
-            divTask.classList.remove('movel')
-            refresh()
-        })
-        return divTask
-    }
+        if(allTaskAvailable){
+            if('ontouchstart' in document.documentElement){
+                divTask.addEventListener('touchstart',()=> divTask.classList.add('movel'))
+                divTask.addEventListener('touchend', ()=> {
+                    divTask.classList.remove('movel')
+                    refresh()
+                })
+            }else{
+                divTask.addEventListener('dragstart',()=> divTask.classList.add('movel'))
+                divTask.addEventListener('dragend', ()=> {
+                    divTask.classList.remove('movel')
+                    refresh()
+                })
+            }
+        }
+            return divTask
+        }
+    //--------------------------------------------------------------------------------------------//
 
-    // Modificando a tarefa
+    // MODIFYING TASKS
 
+    //Single taks modification event
     campo.addEventListener('click', (event)=>{
         event.preventDefault()
         domEvent(event.target)
     })
 
+    //Identifies and carries out the desired modification
     function domEvent(event){
         const tipagem = event.getAttribute('tipo')
         if(event.className === 'campo' || !tipagem ){
@@ -172,22 +192,35 @@
             opcoes[tipagem]()
         }
     }
+    //--------------------------------------------------------------------------------------------//
 
-    // Arrastando e soltando
+    // DRAG AND DROP
 
+    //Modifies the position of tasks on the screen
     function initSortableList(event){
+        if(!allTaskAvailable){
+            document.querySelector('.status').textContent = 'Clique em "Todos" para poder mover!'
+            return
+        }
         event.preventDefault()
         const movel = campo.querySelector('.movel')
         const irmaos = [...campo.querySelectorAll('.task:not(.movel)')]
         let proxIrmao = irmaos.find(element =>{
+            if('ontouchstart' in document.documentElement){
+                return event.touches[0].clientY <= element.offsetTop + element.offsetHeight /2
+            }
             return event.clientY <= element.offsetTop + element.offsetHeight /2
         })
         campo.insertBefore(movel, proxIrmao)
     }
-    campo.addEventListener('dragover', initSortableList)
+    if('ontouchstart' in document.documentElement){
+        campo.addEventListener('touchmove', initSortableList)
+    }else{
+        campo.addEventListener('dragover', initSortableList)
+    }
     campo.addEventListener('dragenter', event => event.preventDefault())
 
-
+    //Update the tasks array after changing the position
     function refresh(){
         tasks = [];
         [...campo.children].forEach(element=>{
@@ -197,23 +230,31 @@
         })
         updateTasks(tasks)
     }
+    //--------------------------------------------------------------------------------------------//
 
-    // Filtros e limpeza
+    // FILTERS AND CLEANING
+
+    //Filter single event
     filt.addEventListener('click',(event)=>{
         event.preventDefault()
         filtros(event.target.getAttribute('tipo'))
     })
 
+    //Identifies and performs the desired filtering
     function filtros(tipo){
         const opcoes = {
             todos:()=>{
+                allTaskAvailable = true
+                document.querySelector('.status').textContent = 'Segure e arraste para ordenar a lista!'
                 updateTasks(tasks)
             }, aFazer: ()=>{
+                allTaskAvailable = false
                 const pendente = tasks.filter(element=>{
                     return element.concluido === false
                 })
                 updateTasks(pendente, 'tarefas pendentes')
             }, concluido:()=>{
+                allTaskAvailable = false
                 const realizado = tasks.filter(element=>{
                     return element.concluido === true
                 })
@@ -225,6 +266,7 @@
         }
     }
 
+    //Clear all completed tasks
     config.lastElementChild.addEventListener('click',()=>{
         const pendentes = tasks.filter(element=>{
             if(element.concluido === false){
@@ -234,9 +276,11 @@
         tasks = pendentes
         updateTasks(tasks)
     })
+    //--------------------------------------------------------------------------------------------//
 
-    // Armazenamento
+    // STORAGE
 
+    //Retrieves the storage data and insert in to the tasks array
     function getTask(){
         let arm = localStorage.getItem('tasks')
         if(arm === null || !arm.length ){
@@ -248,8 +292,9 @@
     }
     getTask()
 
+    //Retrieves the current state of the tasks array and saves it in localStorage
     function saveTask(obj){
         localStorage.setItem('tasks', JSON.stringify(obj))
     }
-
+    //--------------------------------------------------------------------------------------------//
 }())
